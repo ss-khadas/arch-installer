@@ -135,11 +135,9 @@ install(){
 sysconfig(){
 	pacman -Syy
 	#INSTALLING GRUB PACKAGE
-	color cyan "Install GRUB? y/n"
-    read grub
+	
     if [ "$grub" == y ];then
-    color default "Choose grub setting"
-    select type in "BIOS" "EFI";do
+    
             case $type in
                 "BIOS")	   
 					color deepblue "installing grub package..."
@@ -161,7 +159,7 @@ sysconfig(){
                     color red "Error! Input a valid command..."
                 ;;
             esac
-        done
+        
 	fi
 
 	#PC'S NAME AND PASSWORD
@@ -192,14 +190,13 @@ sysconfig(){
     useradd -m -g wheel $USER
     usermod -aG root,bin,daemon,tty,disk,network,video,audio $USER
     color cyan "Set the password"
+    read passwrd
     passwd $USER
     pacman -S --noconfirm sudo
     sed -i 's/\# \%wheel ALL=(ALL) ALL/\%wheel ALL=(ALL) ALL/g' /etc/sudoers
     sed -i 's/\# \%wheel ALL=(ALL) NOPASSWD: ALL/\%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers
 
     #SETUP A VIDEOGRAPHIC DRIVER
-    color cyan "What is your video graphic card?"
-    select GPU in "Intel" "Nvidia" "AMD" "driver for VirtuaBox";do
         case $GPU in
             "Intel")
                 pacman -S --noconfirm xf86-video-intel -y
@@ -221,7 +218,7 @@ sysconfig(){
                 color red "Error! Please input the correct num"
             ;;
         esac
-    done
+   
 	
 }
 
@@ -231,8 +228,6 @@ postinstall(){
 	arch-chroot /mnt pacman -Su
 	arch-chroot /mnt pacman -S 
 	arch-chroot /mnt sudo pacman -S xorg-server xorg-xinit xorg-apps mesa-libgl xterm
-	color cyan "Install XFCE4? y/n"
-    read xfce
     if [ "$xfce" == y ];then
     		arch-chroot /mnt pacman -S xfce4 xfce4-goodies sddm
                 arch-chroot /mnt systemctl enable sddm.service
@@ -274,6 +269,16 @@ postinstall(){
 }
 
 preinstall
+color cyan "Install GRUB? y/n"
+    read grub
+if [ "$grub" == y ];then
+    color default "Choose grub setting"
+    select type in "BIOS" "EFI"
+fi
+color cyan "Install XFCE4? y/n"
+    read xfce
+color cyan "What is your video graphic card?"
+    select GPU in "Intel" "Nvidia" "AMD" "driver for VirtuaBox"
 install
 sysconfig
 postinstall

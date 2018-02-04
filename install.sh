@@ -136,31 +136,7 @@ sysconfig(){
 	pacman -Syy
 	#INSTALLING GRUB PACKAGE
 	
-    if [ "$grub" == y ];then
-    
-            case $type in
-                "BIOS")	   
-					color deepblue "installing grub package..."
-					arch-chroot /mnt pacman -S grub-bios 
-					grub-install /dev/sda
-        			arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-                    break
-                ;;
-                "EFI")
-				color deepblue "installing grub package..."
-                   	arch-chroot /mnt pacman -S grub-efi-x86_64 
-        			grub-install /dev/sda
-        			arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-        			mkdir /mnt/boot/EFI/boot
-        			cp /mnt/boot/EFI/arch_grub/grubx64.efi /mnt/boot/EFI/boot/bootx64.efi
-                    break
-                ;;
-                *)
-                    color red "Error! Input a valid command..."
-                ;;
-            esac
-        
-	fi
+   
 
 	#PC'S NAME AND PASSWORD
 	color cyan "Input your hostname"
@@ -273,7 +249,32 @@ color cyan "Install GRUB? y/n"
     read grub
 if [ "$grub" == y ];then
     color default "Choose grub setting"
-    select type in "BIOS" "EFI"
+    select type in "BIOS" "EFI";do
+     if [ "$grub" == y ];then
+    
+            case $type in
+                "BIOS")	   
+					color deepblue "installing grub package..."
+					arch-chroot /mnt pacman -S grub-bios 
+					grub-install /dev/sda
+        			arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+                    break
+                ;;
+                "EFI")
+				color deepblue "installing grub package..."
+                   	arch-chroot /mnt pacman -S grub-efi-x86_64 
+        			grub-install /dev/sda
+        			arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+        			mkdir /mnt/boot/EFI/boot
+        			cp /mnt/boot/EFI/arch_grub/grubx64.efi /mnt/boot/EFI/boot/bootx64.efi
+                    break
+                ;;
+                *)
+                    color red "Error! Input a valid command..."
+                ;;
+            esac
+        
+	fi
 fi
 color cyan "Install XFCE4? y/n"
     read xfce
@@ -282,6 +283,3 @@ color cyan "What is your video graphic card?"
 install
 sysconfig
 postinstall
-
-    
-
